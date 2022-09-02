@@ -143,6 +143,7 @@ def modified_train(epochs, model, beta, lr):
 @torch.no_grad()
 def eval(model, val):
     l = 0
+    c = 0
     for batch in val:
         input_ids, attention_mask, labels = batch
 
@@ -155,8 +156,9 @@ def eval(model, val):
                        labels=labels)
 
         l += output.loss.detach().cpu()
+        c+=1
 
-    l = l / val.shape(0)
+    l = l / c
 
     return l, torch.exp(l)
 

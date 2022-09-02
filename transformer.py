@@ -19,7 +19,6 @@ from transformers import AlbertTokenizer, AlbertForMaskedLM, AlbertConfig
 import wandb
 import datetime
 
-wandb.login()
 
 device = torch.device('cuda:0')
 data_path = "./ptbdataset/" #data path
@@ -37,15 +36,20 @@ batch_size = 10
 lr = 1
 beta = 1 #hyperparam
 
+
+config = albert_model_configuration.to_dict()
+config["epochs"] = epochs
+config["optimizer"] = optimizer
+config["batch_size"] = batch_size
+config["learning_rate"] = lr
+config["beta"] = beta
+
+
 wandb.init(
     project="Normalized gradient optimizer",
+    entity="yugansh",
     name="experiment_transformer_"+str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-    config={"model_config": albert_model_configuration,
-            "epochs": epochs,
-            "optimizer": optimizer,
-            "batch_size": batch_size,
-            "learning_rate": lr,
-            "beta": beta}
+    config=config
 )
 
 model = AlbertForMaskedLM(albert_model_configuration)

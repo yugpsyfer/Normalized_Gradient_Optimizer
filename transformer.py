@@ -27,7 +27,7 @@ albert_model_configuration = AlbertConfig(
     vocab_size=30000, #total unique tokens
     hidden_size=512,
     num_attention_heads=4,
-    intermediate_size=2048,
+    intermediate_size=1024,
 )
 
 epochs = 100

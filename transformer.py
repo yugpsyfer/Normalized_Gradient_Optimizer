@@ -118,7 +118,7 @@ def modified_train(epochs, model, beta, lr):
                     x = p.grad
                     y = torch.norm(x, dim=1)
                     x = F.normalize(x, dim=1)
-                    y = (torch.tile(y.mT, dims=(p.grad.shape[1], 1))).reshape(p.grad.shape[0], p.grad.shape[1])
+                    y = (torch.tile(y.T, dims=(p.grad.shape[1], 1))).reshape(p.grad.shape[0], p.grad.shape[1])
                 else:
                     y = p.grad
                     x = torch.ones(device=device, size=p.grad.shape, dtype=torch.double)

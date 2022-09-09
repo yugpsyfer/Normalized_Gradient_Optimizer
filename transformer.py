@@ -22,6 +22,7 @@ import datetime
 
 device = torch.device('cuda:0')
 data_path = "./ptbdataset/" #data path
+model_save_path = "./checkpoint/"
 
 albert_model_configuration = AlbertConfig(
     vocab_size=30000, #total unique tokens
@@ -138,6 +139,8 @@ def modified_train(epochs, model, beta, lr):
                        "Training_perplexity": torch.exp(l / c),
                        "Validation_loss": vl,
                        "Validation_perplexity": vp})
+
+            torch.save(model, model_save_path+"best.pt")
 
 
 @torch.no_grad()

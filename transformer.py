@@ -140,7 +140,7 @@ def modified_train(epochs, model, beta, lr):
                        "Validation_loss": vl,
                        "Validation_perplexity": vp})
 
-            torch.save(model, model_save_path+"best.pt")
+            torch.save(model, model_save_path+"transformer_best.pt")
 
 
 @torch.no_grad()

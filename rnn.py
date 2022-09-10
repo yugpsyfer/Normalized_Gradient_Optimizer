@@ -219,3 +219,5 @@ if __name__ == "__main__":
 
     model = TextRnn(embedding_dim, n_hidden, n_layers, n_tokens)
     model.to(device)
+
+    modified_train(epochs, model, beta, lr)

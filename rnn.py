@@ -167,6 +167,8 @@ def eval(model, val):
 
 
 if __name__ == "__main__":
+    print("==============STARTING TRAINING==============")
+
     corpus = Corpus()
 
     train_data = corpus.make_data(src_path + "train.txt")

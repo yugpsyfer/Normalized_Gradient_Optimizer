@@ -92,7 +92,7 @@ class TextRnn(nn.Module):
 
     def forward(self, X):
         input = self.embedder(X)
-        outputs, (_, _) = self.rnn(input)
+        outputs, _ = self.rnn(input)
         outputs = outputs[:,-1,:]
         outputs = self.decoder(outputs)
 

@@ -12,7 +12,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data import Dataset
-
+from NormGrad import NormGrad as NGD
 import numpy as np
 from transformers import AlbertTokenizer, AlbertForMaskedLM, AlbertConfig
 
@@ -94,7 +94,7 @@ class TextData(Dataset):
         return ip
 
 
-def modified_train(epochs, model, beta, lr):
+def train(epochs, model, optimizer):
 
     for epoch in range(epochs):
         l = 0
@@ -106,28 +106,28 @@ def modified_train(epochs, model, beta, lr):
             input_ids = input_ids.to(device)
             attention_mask = attention_mask.to(device)
             labels = labels.to(device)
-            model.zero_grad()
+            optimizer.zero_grad()
             output = model(input_ids=torch.squeeze(input_ids, dim=1),
                            attention_mask=torch.squeeze(attention_mask, dim=1),
                            labels=labels)
             loss = output.loss
             loss.backward()
-
-            for p in model.parameters():
-
-                if len(p.grad.shape) == 2:
-                    x = p.grad
-                    y = torch.norm(x, dim=1)
-                    x = F.normalize(x, dim=1)
-                    y = (torch.tile(y.T, dims=(p.grad.shape[1], 1))).reshape(p.grad.shape[0], p.grad.shape[1])
-                else:
-                    y = p.grad
-                    x = torch.ones(device=device, size=p.grad.shape, dtype=torch.double)
-
-                y[beta < y] = beta
-                x = y * x
-
-                p.data.add_(x, alpha=-lr)
+            optimizer.step()
+            # for p in model.parameters():
+            #
+            #     if len(p.grad.shape) == 2:
+            #         x = p.grad
+            #         y = torch.norm(x, dim=1)
+            #         x = F.normalize(x, dim=1)
+            #         y = (torch.tile(y.T, dims=(p.grad.shape[1], 1))).reshape(p.grad.shape[0], p.grad.shape[1])
+            #     else:
+            #         y = p.grad
+            #         x = torch.ones(device=device, size=p.grad.shape, dtype=torch.double)
+            #
+            #     y[beta < y] = beta
+            #     x = y * x
+            #
+            #     p.data.add_(x, alpha=-lr)
 
             l += loss.detach().cpu()
             c += 1
@@ -159,7 +159,7 @@ def eval(model, val):
                        labels=labels)
 
         l += output.loss.detach().cpu()
-        c+=1
+        c += 1
 
     l = l / c
 
@@ -177,5 +177,8 @@ if __name__ == '__main__':
     test_loader = DataLoader(test_set, batch_size=batch_size)
     valid_loader = DataLoader(valid_set, batch_size=batch_size)
 
+    # ngd = NGD(model.parameters(), lr, beta)   #Normalized gradient optimizer
+    adam = optim.Adam(model.parameters(), lr)
+
     print("====== Starting Training ======")
-    modified_train(epochs, model, lr, beta)
+    train(epochs, model, adam)

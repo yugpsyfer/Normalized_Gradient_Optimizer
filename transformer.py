@@ -34,7 +34,7 @@ albert_model_configuration = AlbertConfig(
 epochs = 100
 optimizer = "NormGrad"
 batch_size = 45
-lr = 1
+lr = 1e-4
 beta = 1 #hyperparam
 
 
